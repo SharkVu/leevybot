@@ -429,9 +429,8 @@ export default function LandingPage() {
                     {codeLines.map((line, index) => (
                       <motion.div
                         key={index}
-                        className={`leading-relaxed transition-all duration-1000 mb-1 ${
-                          index === currentCodeLine ? "text-slate-400/60" : "text-slate-600/30"
-                        }`}
+                        className={`leading-relaxed transition-all duration-1000 mb-1 ${index === currentCodeLine ? "text-slate-400/60" : "text-slate-600/30"
+                          }`}
                         initial={{ opacity: 0 }}
                         animate={{
                           opacity: index === currentCodeLine ? 0.6 : 0.3,
@@ -581,11 +580,11 @@ export default function LandingPage() {
                   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-XFeqVcVyiNquzgnX3vxSMnEPeNSKEE.png",
               },
               {
-                name: "Night Gaming",
-                members: "6,589",
+                name: "Đất Việt RP",
+                members: "184",
                 status: "online",
                 avatar:
-                  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image-BtowfkN5bOtiJEWcdgq8WXe7CPUjsj.png",
+                  "https://ik.imagekit.io/jym2d2so9/Remove-bg.ai_1749028486652.png?updatedAt=1750240587637",
               },
             ].map((server, index) => (
               <motion.div
