@@ -76,11 +76,6 @@ export function FloatingComments({ comments, userComments = [] }: FloatingCommen
                   <div className="flex items-center justify-between mb-1 sm:mb-2">
                     <p className="text-xs sm:text-sm font-semibold text-white truncate flex items-center">
                       {comment.name}
-                      {comment.isUser && (
-                        <span className="ml-1 sm:ml-2 px-1 sm:px-2 py-0.5 sm:py-1 bg-green-500/20 text-green-400 text-xs rounded-full border border-green-500/30">
-                          Thật
-                        </span>
-                      )}
                     </p>
                     <div className="flex items-center space-x-0.5 sm:space-x-1">
                       {[...Array(5)].map((_, i) => (
