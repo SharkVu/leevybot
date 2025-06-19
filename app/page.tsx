@@ -1,3 +1,4 @@
+
 "use client"
 
 import { motion } from "framer-motion"
@@ -22,6 +23,7 @@ import {
   Bot,
   MessageSquare,
   Zap,
+  Terminal,
 } from "lucide-react"
 import { useState, useEffect } from "react"
 import { FloatingComments } from "@/components/floating-comments"
@@ -141,7 +143,7 @@ const steps = [
   },
 ]
 
-// Code lines for background animation - simplified
+// Code lines for background animation
 const codeLines = [
   "const { Client, GatewayIntentBits } = require('discord.js');",
   "const bot = new Client({ intents: [GatewayIntentBits.Guilds] });",
@@ -163,6 +165,80 @@ const codeLines = [
   "bot.login(process.env.DISCORD_TOKEN);",
 ]
 
+// Demo code snippets for the "Sửa Lỗi Nhanh Chóng" section
+const demoCodeSnippets = [
+  {
+    title: "Điểm danh hàng ngày",
+    code: `bot.on('messageCreate', async (message) => {
+  if (message.content === '*diemdanh') {
+    const userId = message.author.id;
+    const today = new Date().toDateString();
+    
+    if (!userData[userId]) {
+      userData[userId] = { lastCheckin: null, streak: 0, coins: 0 };
+    }
+    
+    if (userData[userId].lastCheckin !== today) {
+      userData[userId].lastCheckin = today;
+      userData[userId].streak += 1;
+      userData[userId].coins += 100;
+      
+      await message.reply(\`✅ Điểm danh thành công! 
+🎁 +100 xu | 🔥 Streak: \${userData[userId].streak} ngày\`);
+    } else {
+      await message.reply('❌ Bạn đã điểm danh hôm nay rồi!');
+    }
+  }
+});`,
+  },
+  {
+    title: "Hệ thống Farm",
+    code: `bot.on('messageCreate', async (message) => {
+  if (message.content === '*haiqua') {
+    const userId = message.author.id;
+    const fruits = ['🍎', '🍊', '🍌', '🍇', '🥝'];
+    const randomFruit = fruits[Math.floor(Math.random() * fruits.length)];
+    const amount = Math.floor(Math.random() * 5) + 1;
+    
+    if (!userData[userId].inventory) {
+      userData[userId].inventory = {};
+    }
+    
+    userData[userId].inventory[randomFruit] = 
+      (userData[userId].inventory[randomFruit] || 0) + amount;
+    
+    await message.reply(\`🌳 Hái quả thành công!
+\${randomFruit} x\${amount} đã được thêm vào kho!\`);
+  }
+});`,
+  },
+  {
+    title: "Hệ thống Shop",
+    code: `bot.on('messageCreate', async (message) => {
+  if (message.content === '*shop') {
+    const shopEmbed = {
+      title: '🏪 Cửa hàng LeeVy',
+      color: 0x00ff00,
+      fields: [
+        {
+          name: '🍞 Thực phẩm',
+          value: 'Bánh mì: 50 xu\\nNước suối: 30 xu\\nCơm hộp: 75 xu',
+          inline: true
+        },
+        {
+          name: '🔧 Công cụ', 
+          value: 'Cuốc: 200 xu\\nRìu: 250 xu\\nCần câu: 300 xu',
+          inline: true
+        }
+      ]
+    };
+    
+    await message.reply({ embeds: [shopEmbed] });
+  }
+});`,
+  },
+]
+
 export default function LandingPage() {
   const [showRatingForm, setShowRatingForm] = useState(false)
   const [showCommandModal, setShowCommandModal] = useState(false)
@@ -171,12 +247,21 @@ export default function LandingPage() {
   const [showCodeModal, setShowCodeModal] = useState(false)
   const [userComments, setUserComments] = useState<Array<{ name: string; comment: string; stars: number }>>([])
   const [currentCodeLine, setCurrentCodeLine] = useState(0)
+  const [currentDemoIndex, setCurrentDemoIndex] = useState(0)
 
   // Animate code lines in background
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentCodeLine((prev) => (prev + 1) % codeLines.length)
     }, 2000)
+    return () => clearInterval(interval)
+  }, [])
+
+  // Animate demo code snippets
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentDemoIndex((prev) => (prev + 1) % demoCodeSnippets.length)
+    }, 8000)
     return () => clearInterval(interval)
   }, [])
 
@@ -420,17 +505,14 @@ export default function LandingPage() {
               transition={{ duration: 0.8, delay: 0.4 }}
             >
               <div className="relative w-64 sm:w-80 lg:w-full max-w-md">
-                {/* Simplified Code Background */}
                 <div className="absolute inset-0 -z-10 overflow-hidden rounded-full">
                   <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-sm"></div>
 
-                  {/* Simple code display - no colors */}
                   <div className="absolute inset-0 font-mono text-xs text-slate-500/40 p-4 overflow-hidden">
                     {codeLines.map((line, index) => (
                       <motion.div
                         key={index}
-                        className={`leading-relaxed transition-all duration-1000 mb-1 ${index === currentCodeLine ? "text-slate-400/60" : "text-slate-600/30"
-                          }`}
+                        className={`leading-relaxed transition-all duration-1000 mb-1 ${index === currentCodeLine ? "text-slate-400/60" : "text-slate-600/30"}`}
                         initial={{ opacity: 0 }}
                         animate={{
                           opacity: index === currentCodeLine ? 0.6 : 0.3,
@@ -446,7 +528,6 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* Neon effect for avatar */}
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 to-pink-500/30 rounded-full blur-xl"
                   animate={{
@@ -488,6 +569,104 @@ export default function LandingPage() {
                     ease: "easeInOut",
                   }}
                 />
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sửa Lỗi Nhanh Chóng Section */}
+      <section className="py-12 sm:py-16 lg:py-20 relative bg-slate-900/30">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <motion.div
+            className="text-center mb-12 sm:mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h3 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">
+              <span className="bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+                Sửa Lỗi Nhanh Chóng
+              </span>
+            </h3>
+            <p className="text-base sm:text-lg lg:text-xl text-slate-300 max-w-3xl mx-auto px-4">
+              Admin sẽ sửa lỗi cho người dùng chỉ trong vài ba phút khi có khiếu nại sự cố
+            </p>
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+            >
+              <div className="space-y-6">
+                <h4 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+                  {demoCodeSnippets[currentDemoIndex].title}
+                </h4>
+                <p className="text-slate-300 text-lg leading-relaxed">
+                  Khám phá cách LeeVy Bot xử lý các lệnh phức tạp với JavaScript và Discord.js. Mỗi tính năng được code
+                  tỉ mỉ để mang lại trải nghiệm tốt nhất.
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  <Button
+                    className="bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white font-semibold px-6 py-3 rounded-full"
+                    onClick={() => setShowCodeModal(true)}
+                  >
+                    <Code className="w-4 h-4 mr-2" />
+                    Xem Full Demo
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="relative"
+            >
+              <Card className="bg-slate-900/80 border-slate-700/50 backdrop-blur-sm overflow-hidden">
+                <div className="bg-slate-800 px-4 py-2 border-b border-slate-700 flex items-center space-x-2">
+                  <div className="flex space-x-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  </div>
+                  <span className="text-slate-300 text-sm ml-4">bot.js</span>
+                  <div className="flex-1"></div>
+                  <Terminal className="w-4 h-4 text-slate-400" />
+                </div>
+                <CardContent className="p-0">
+                  <div
+                    className="bg-slate-950 p-4 font-mono text-sm max-h-96 overflow-y-auto select-none"
+                    style={{ userSelect: "none", WebkitUserSelect: "none" }}
+                  >
+                    <motion.pre
+                      key={currentDemoIndex}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5 }}
+                      className="text-slate-300 whitespace-pre-wrap leading-relaxed"
+                      style={{ userSelect: "none", WebkitUserSelect: "none" }}
+                    >
+                      {demoCodeSnippets[currentDemoIndex].code}
+                    </motion.pre>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="flex justify-center mt-4 space-x-2">
+                {demoCodeSnippets.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentDemoIndex(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentDemoIndex ? "bg-orange-500 scale-125" : "bg-slate-600 hover:bg-slate-500"}`}
+                  />
+                ))}
               </div>
             </motion.div>
           </div>
